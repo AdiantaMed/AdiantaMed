@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulação — adiantaMed</title>
+<meta name="description" content="Simule a antecipação do seu plantão médico e veja na hora quanto você recebe.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://adiantamed.com.br/simulacao.html">
+<meta name="theme-color" content="#C8142F">
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="adiantaMed">
+<meta property="og:title" content="Simulação — adiantaMed">
+<meta property="og:description" content="Simule a antecipação do seu plantão médico e veja na hora quanto você recebe.">
+<meta property="og:url" content="https://adiantamed.com.br/simulacao.html">
+<meta property="og:image" content="https://adiantamed.com.br/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="adiantaMed — antecipação de plantões médicos">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://adiantamed.com.br/og-image.png">
+
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+
+<header class="site-header">
+<div class="wrap header-row">
+<a class="brand" href="/" aria-label="adiantaMed — início"><img src="/logo.svg" alt="adiantaMed" width="236" height="30"></a>
+<nav id="menu" class="nav" aria-label="Principal">
+<a href="/">Início</a>
+<a href="/como-funciona.html">Como funciona</a>
+<a href="/simulacao.html" aria-current="page">Simulação</a>
+<a href="/para-hospitais.html">Para hospitais</a>
+<a href="/quem-somos.html">Quem somos</a>
+<a href="/duvidas.html">Dúvidas</a>
+<a href="/contato.html">Contato</a>
+<a class="btn btn-primary nav-cta" href="/simulacao.html">Simular agora</a>
+</nav>
+<div class="header-cta">
+<a class="btn btn-primary btn-sm" href="/simulacao.html">Simular agora</a>
+<button class="menu-btn" type="button" aria-label="Abrir menu" aria-controls="menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+</div>
+</div>
+</header>
+
+<main id="conteudo">
+<section class="dark page-hero">
+<div class="wrap">
+<p class="eyebrow">Simulação</p>
+<h1 class="h1">Quanto você recebe hoje?</h1>
+<p class="lead">Informe o valor do plantão e o prazo em que o hospital paga. Se gostar do resultado, envie a simulação pelo WhatsApp e seguimos com a análise.</p>
+</div>
+</section>
+
+<section class="section soft">
+<div class="wrap">
+<div class="split">
+<div class="split-side" style="flex:1 1 440px"><div class="sim" data-sim>
+<div class="sim-row">
+<div class="sim-head"><label for="valor">Valor do plantão</label></div>
+<div class="money-input"><span>R$</span><input id="valor" type="text" inputmode="numeric" autocomplete="off" value="5.000" data-sim-input></div>
+<input type="range" min="500" max="20000" step="100" value="5000" aria-label="Valor do plantão" data-sim-range>
+</div>
+<fieldset>
+<legend>O hospital paga em</legend>
+<div class="pills">
+<button type="button" class="pill" data-prazo="30" aria-pressed="false">30 dias</button>
+<button type="button" class="pill" data-prazo="45" aria-pressed="true">45 dias</button>
+<button type="button" class="pill" data-prazo="60" aria-pressed="false">60 dias</button>
+<button type="button" class="pill" data-prazo="90" aria-pressed="false">90 dias</button>
+</div>
+</fieldset>
+<div class="sim-result" aria-live="polite">
+<div>Você recebe agora</div>
+<div class="big" data-out="liquido">R$ 4.812,50</div>
+<dl class="sim-breakdown">
+<dt>Valor do plantão</dt><dd data-out="bruto">R$ 5.000,00</dd>
+<dt>Prazo do hospital</dt><dd data-out="prazo">45 dias</dd>
+<dt>Taxa única (<span data-out="taxa">3,75%</span>)</dt><dd data-out="desconto">− R$ 187,50</dd>
+</dl>
+</div>
+<a class="btn btn-primary" href="/contato.html" data-sim-cta data-wa><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.9-4.45 9.9-9.91A9.86 9.86 0 0 0 12.04 2zm0 18.15h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.25-8.23a8.2 8.2 0 0 1 8.23 8.24c0 4.54-3.7 8.23-8.23 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.43-.06-.13-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.29z"/></svg>Quero antecipar este plantão</a>
+<p class="small">Valores ilustrativos. A taxa final depende do hospital e do prazo de pagamento e é confirmada antes da assinatura.</p>
+</div></div>
+<div class="split-main">
+<h2 class="h2" style="font-size:clamp(26px,3vw,34px)">Como a taxa é calculada</h2>
+<p class="lead">A taxa é única e proporcional ao tempo que falta para o hospital pagar. Quanto mais curto o prazo, menor o desconto.</p>
+<ul class="checklist">
+<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Sem mensalidade, sem tarifa de cadastro</li>
+<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Taxa confirmada antes da assinatura</li>
+<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Hospitais conveniados podem ter condições melhores</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+
+<section class="cta-band">
+<div class="wrap">
+<h2 class="h2">Prefere falar com alguém?</h2>
+<div class="actions">
+<a class="btn btn-white" href="/simulacao.html">Fazer minha simulação</a>
+<a class="btn btn-line-white" href="/contato.html" data-wa><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.9-4.45 9.9-9.91A9.86 9.86 0 0 0 12.04 2zm0 18.15h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.25-8.23a8.2 8.2 0 0 1 8.23 8.24c0 4.54-3.7 8.23-8.23 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.43-.06-.13-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.29z"/></svg>Falar no WhatsApp</a>
+</div>
+</div>
+</section>
+</main>
+
+<footer class="site-footer">
+<div class="wrap">
+<div class="footer-top">
+<div class="footer-brand">
+<img src="/logo-branco.svg" alt="adiantaMed" width="236" height="30">
+<p>Antecipação de plantões médicos, direto e sem burocracia.</p>
+</div>
+<nav class="footer-col" aria-label="Navegação do rodapé">
+<h2>Navegação</h2>
+<a href="/">Início</a>
+<a href="/como-funciona.html">Como funciona</a>
+<a href="/simulacao.html">Simulação</a>
+<a href="/quem-somos.html">Quem somos</a>
+</nav>
+<div class="footer-col">
+<h2>Serviços</h2>
+<a href="/como-funciona.html">Antecipação de plantões</a>
+<a href="/para-hospitais.html">Convênio para hospitais</a>
+<a href="/duvidas.html">Dúvidas frequentes</a>
+</div>
+<div class="footer-col">
+<h2>Contato</h2>
+<a href="/contato.html" data-wa>WhatsApp [(XX) XXXXX-XXXX]</a>
+<a href="mailto:contato@adiantamed.com.br">contato@adiantamed.com.br</a>
+<a href="/contato.html">Fale conosco</a>
+</div>
+</div>
+<div class="footer-bottom">
+<span>© <span data-year>2026</span> adiantaMed · CNPJ [00.000.000/0001-00]</span>
+<span><a href="/privacidade.html">Política de Privacidade</a> · <a href="/termos.html">Termos de Uso</a></span>
+</div>
+</div>
+</footer>
+
+<a class="wa-float" href="/contato.html" data-wa aria-label="Falar no WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.9-4.45 9.9-9.91A9.86 9.86 0 0 0 12.04 2zm0 18.15h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.25-8.23a8.2 8.2 0 0 1 8.23 8.24c0 4.54-3.7 8.23-8.23 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.43-.06-.13-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.29z"/></svg></a>
+<script src="/main.js"></script>
+</body>
+</html>
