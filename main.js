@@ -3,7 +3,7 @@
  *  CONFIGURAÇÃO: troque estes valores antes de publicar
  * ============================================================ */
 var ADIANTAMED = {
-  whatsapp: '55XXXXXXXXXXX',   // DDI + DDD + número, só dígitos. Ex.: 5519999999999
+  whatsapp: '5519998457373',   // DDI + DDD + número, só dígitos
   taxaMensal: 2.5,             // % ao mês usada no simulador (valor ilustrativo)
   taxaMinima: 2.0,             // % mínima por operação
   valorMin: 500,
@@ -51,13 +51,7 @@ var ADIANTAMED = {
     var range = sim.querySelector('[data-sim-range]');
     var input = sim.querySelector('[data-sim-input]');
     var pills = sim.querySelectorAll('[data-prazo]');
-    var out = {
-      liquido: sim.querySelector('[data-out="liquido"]'),
-      bruto: sim.querySelector('[data-out="bruto"]'),
-      taxa: sim.querySelector('[data-out="taxa"]'),
-      desconto: sim.querySelector('[data-out="desconto"]'),
-      prazo: sim.querySelector('[data-out="prazo"]')
-    };
+    var out = { liquido: sim.querySelector('[data-out="liquido"]') };
     var cta = sim.querySelector('[data-sim-cta]');
     var state = { valor: 5000, prazo: 45 };
 
@@ -70,13 +64,8 @@ var ADIANTAMED = {
     function calc() {
       var v = Math.min(Math.max(state.valor, 0), ADIANTAMED.valorMax);
       var pct = Math.max(ADIANTAMED.taxaMensal * state.prazo / 30, ADIANTAMED.taxaMinima) / 100;
-      var desconto = v * pct;
-      var liquido = v - desconto;
+      var liquido = v * (1 - pct);
       out.liquido.textContent = brl(liquido);
-      out.bruto.textContent = brl(v);
-      out.taxa.textContent = (pct * 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 }) + '%';
-      out.desconto.textContent = '− ' + brl(desconto);
-      out.prazo.textContent = state.prazo + ' dias';
       if (cta) {
         var msg = 'Olá! Simulei no site da adiantaMed:\n' +
           '• Plantão: ' + brl(v) + '\n' +

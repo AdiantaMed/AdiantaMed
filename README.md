@@ -15,9 +15,8 @@ Site estático da adiantaMed, pronto para o GitHub Pages.
 
 | Onde | O quê |
 |---|---|
-| `main.js` (topo) | `whatsapp`: número com DDI+DDD, só dígitos. `taxaMensal` e `taxaMinima` do simulador |
-| Todas as páginas (rodapé) | `WhatsApp [(XX) XXXXX-XXXX]` e `CNPJ [00.000.000/0001-00]` |
-| `index.html` | `[X]h` (prazo de pagamento) nos selos e no comparativo |
+| `main.js` (topo) | `taxaMensal` e `taxaMinima` do simulador (o WhatsApp já está configurado) |
+| Todas as páginas (rodapé) | `CNPJ [00.000.000/0001-00]` |
 | `duvidas.html` / `index.html` | respostas marcadas com `[...]` (documentos, taxas, prazo, atraso do hospital) |
 | `quem-somos.html` | texto institucional |
 | `contato.html` | horário de atendimento |
@@ -40,3 +39,6 @@ Dica: busque por `[` em todos os arquivos para achar o que falta.
 - **Simulador:** calcula no navegador e envia o resultado pronto pelo WhatsApp.
 - **Formulário de contato:** monta a mensagem e abre o WhatsApp — não precisa de backend.
 - Envio de documentos e geração automática do contrato de cessão exigem um backend (ex.: Google Apps Script + Drive + plataforma de assinatura) — próxima etapa.
+
+## Cor do topo
+O tema é definido no `<html data-theme="azul">` de cada página. Opções prontas no `style.css`: `azul`, `rose`, `branco`.
