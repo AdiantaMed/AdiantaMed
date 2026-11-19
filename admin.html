@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="/style.css?v=3">
-<link rel="stylesheet" href="/portal.css?v=1">
+<link rel="stylesheet" href="/portal.css?v=3">
 </head>
 <body class="portal-body" data-page="admin">
 <a class="skip" href="#conteudo">Pular para o conteúdo</a>
@@ -26,31 +26,76 @@
 <main id="conteudo">
 
 <div class="wrap">
-<div class="portal-title"><div><h1>Painel admin</h1><p>Todas as operações e clientes da adiantaMed.</p></div></div>
+<div class="portal-title"><div><h1>Painel admin</h1><p>Boletas por etapa: análise, assinatura, pagamento e histórico.</p></div></div>
 <div class="alert" id="aviso" role="status" aria-live="polite" hidden></div>
 <div class="stats" id="stats"></div>
 <div class="page-tabs" role="tablist">
-<button class="page-tab" type="button" role="tab" data-aba="ops" aria-selected="true">Operações</button>
+<button class="page-tab" type="button" role="tab" data-aba="analise" aria-selected="true">Em análise <span class="conta">0</span></button>
+<button class="page-tab" type="button" role="tab" data-aba="assinatura" aria-selected="false">Aguardando assinaturas <span class="conta">0</span></button>
+<button class="page-tab" type="button" role="tab" data-aba="pagamento" aria-selected="false">Efetuar pagamento <span class="conta">0</span></button>
+<button class="page-tab" type="button" role="tab" data-aba="historico" aria-selected="false">Histórico</button>
 <button class="page-tab" type="button" role="tab" data-aba="clientes" aria-selected="false">Clientes</button>
+<button class="page-tab" type="button" role="tab" data-aba="config" aria-selected="false">Configurações</button>
 </div>
-<section id="aba-ops">
-<div class="toolbar">
-<div class="chips">
-<label class="sr" for="filtro-status">Filtrar por status</label><select id="filtro-status"></select>
-<label class="sr" for="busca">Buscar</label><input id="busca" type="search" placeholder="Buscar nº, médico, hospital, CRM…">
-</div>
-<span class="small" id="cont-ops"></span>
-</div>
-<div id="tabela-ops"><p class="loading">Carregando…</p></div>
+<section data-secao="analise"><p class="etapa-dica">Boletas novas enviadas pelos médicos. Abra, confira os documentos e decida: enviar o contrato de cessão ou negar.</p><div id="lista-analise"><p class="loading">Carregando…</p></div></section>
+<section data-secao="assinatura" hidden><p class="etapa-dica">Contratos enviados pela ZapSign. Quando médico, hospital e você assinarem, a boleta passa sozinha para "Efetuar pagamento".</p><div id="lista-assinatura"></div></section>
+<section data-secao="pagamento" hidden><p class="etapa-dica">Contratos assinados. Faça o Pix/TED para o médico e confirme aqui: a boleta vai para o histórico.</p><div id="lista-pagamento"></div></section>
+<section data-secao="historico" hidden>
+<div class="toolbar"><div class="chips">
+<label class="sr" for="hist-status">Filtrar</label><select id="hist-status"></select>
+<label class="sr" for="hist-busca">Buscar</label><input id="hist-busca" type="search" placeholder="Nº, médico, CPF, hospital…">
+</div></div>
+<div id="lista-historico"></div>
 </section>
-<section id="aba-clientes" hidden>
-<div id="tabela-clientes"></div>
+<section data-secao="clientes" hidden>
+<div class="toolbar"><div class="chips" style="flex:1">
+<label class="sr" for="cli-busca">Buscar cliente</label><input id="cli-busca" type="search" placeholder="Buscar por nome, CPF, CNPJ, e-mail ou CRM" style="flex:1;min-width:260px">
+</div><span class="small" id="cli-cont"></span></div>
+<div id="lista-clientes"></div>
+</section>
+<section data-secao="config" hidden>
+<form id="form-config" class="box" style="background:#fff;margin-bottom:40px">
+<h3>Dados do cessionário (vão em todos os contratos)</h3>
+<div class="row-2">
+<div class="field"><label for="cf-tipo">Cessionário é</label><select id="cf-tipo" name="tipo"><option value="PJ">Empresa (PJ)</option><option value="PF">Pessoa física</option></select></div>
+<div class="field"><label for="cf-nome">Razão social ou nome completo</label><input id="cf-nome" name="nome" required></div>
+<div class="field"><label for="cf-doc">CNPJ ou CPF</label><input id="cf-doc" name="documento" required></div>
+</div>
+<div class="field"><label for="cf-end">Endereço completo <span class="hint">rua, número, bairro, cidade/UF, CEP</span></label><input id="cf-end" name="endereco" required></div>
+<div class="row-2">
+<div class="field"><label for="cf-rep">Representante que assina <span class="hint">PJ</span></label><input id="cf-rep" name="representante_nome"></div>
+<div class="field"><label for="cf-repcpf">CPF do representante <span class="hint">PJ</span></label><input id="cf-repcpf" name="representante_cpf"></div>
+<div class="field"><label for="cf-qual">Qualificação <span class="hint">ex.: brasileiro, casado, empresário</span></label><input id="cf-qual" name="representante_qualificacao"></div>
+</div>
+<div class="row-2">
+<div class="field"><label for="cf-email">E-mail</label><input id="cf-email" name="email" type="email"></div>
+<div class="field"><label for="cf-tel">Telefone</label><input id="cf-tel" name="telefone"></div>
+</div>
+<h3>Conta onde o hospital vai pagar</h3>
+<div class="row-2">
+<div class="field"><label for="cf-banco">Banco</label><input id="cf-banco" name="banco"></div>
+<div class="field"><label for="cf-ag">Agência</label><input id="cf-ag" name="agencia"></div>
+<div class="field"><label for="cf-cc">Conta</label><input id="cf-cc" name="conta"></div>
+<div class="field"><label for="cf-pix">Chave Pix</label><input id="cf-pix" name="pix"></div>
+</div>
+<h3>Assinatura</h3>
+<div class="row-2">
+<div class="field"><label for="cf-cid">Cidade de assinatura <span class="hint">ex.: Campinas/SP</span></label><input id="cf-cid" name="cidade_assinatura"></div>
+<div class="field"><label for="cf-foro">Foro do contrato <span class="hint">ex.: Campinas/SP</span></label><input id="cf-foro" name="foro"></div>
+</div>
+<div class="alert" id="aviso-config" role="status" aria-live="polite" hidden></div>
+<div><button class="btn btn-primary" type="submit">Salvar dados do cessionário</button></div>
+</form>
 </section>
 </div>
 
-<dialog class="sheet" id="dlg-op" aria-labelledby="op-titulo">
-<div class="sheet-head"><h2 id="op-titulo">Operação</h2><button class="icon-btn" type="button" data-fechar aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+<dialog class="sheet sheet-lg" id="dlg-op" aria-labelledby="op-titulo">
+<div class="sheet-head"><h2 id="op-titulo">Boleta</h2><button class="icon-btn" type="button" data-fechar aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
 <div class="sheet-body" id="op-corpo"></div>
+</dialog>
+<dialog class="sheet sheet-lg" id="dlg-cliente" aria-labelledby="cli-titulo">
+<div class="sheet-head"><h2 id="cli-titulo">Cliente</h2><button class="icon-btn" type="button" data-fechar aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+<div class="sheet-body" id="cli-corpo"></div>
 </dialog>
 </main>
 <footer class="portal-footer">
@@ -61,7 +106,9 @@
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
 <script src="/config.js?v=1"></script>
-<script src="/portal.js?v=1"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfmake@0.3.13/build/pdfmake.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfmake@0.3.13/build/vfs_fonts.js"></script>
+<script src="/portal.js?v=3"></script>
 <script>document.querySelectorAll('[data-year]').forEach(function(e){e.textContent=new Date().getFullYear()});</script>
 </body>
 </html>

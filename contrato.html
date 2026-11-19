@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="azul">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contrato de cessão — adiantaMed</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#C8142F">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/style.css?v=3">
+<link rel="stylesheet" href="/portal.css?v=3">
+</head>
+<body class="portal-body" data-page="contrato">
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+<header class="portal-header">
+<div class="wrap">
+<a class="brand" href="/" aria-label="adiantaMed — voltar ao site"><img src="/logo.svg" alt="adiantaMed" width="204" height="26"></a>
+<div class="portal-user" data-portal-user></div>
+</div>
+</header>
+<main id="conteudo">
+
+<div class="wrap ct-wrap">
+<div class="portal-title"><div><h1 id="ct-titulo">Contrato de cessão</h1><p>Confira a prévia, ajuste os campos e gere o PDF para assinatura.</p></div>
+<a class="btn btn-quiet" href="/admin.html">Voltar ao painel</a></div>
+<div class="alert" id="aviso" role="status" aria-live="polite" hidden></div>
+<div class="alert" id="ct-falta" hidden></div>
+<div class="ct-grid">
+<form id="form-ct" class="box ct-side">
+<h3>Ajustes deste contrato</h3>
+<div class="field"><label for="ct-cid">Cidade de assinatura</label><input id="ct-cid" name="cidade"></div>
+<div class="field"><label for="ct-data">Data</label><input id="ct-data" name="data" type="date"></div>
+<div class="field"><label for="ct-foro">Foro</label><input id="ct-foro" name="foro"></div>
+<div class="field"><label for="ct-prazo">Prazo para pagar o médico</label><input id="ct-prazo" name="prazo" value="1 (um) dia útil"></div>
+<label class="check"><input type="checkbox" name="notificacao" checked> Incluir a notificação ao hospital (com campo de ciência)</label>
+<label class="check"><input type="checkbox" name="mudar_status" checked> Ao salvar, mudar status para "Aguardando assinatura"</label>
+<button class="btn btn-primary btn-block" type="button" id="ct-salvar">Salvar PDF na operação</button>
+<button class="btn btn-outline btn-block" type="button" id="ct-baixar">Só baixar o PDF</button>
+<p class="small">Modelo-base para revisão do seu advogado antes do uso com clientes.</p>
+</form>
+<article class="ct-paper" id="ct-previa" aria-label="Prévia do contrato"><p class="loading">Carregando…</p></article>
+</div>
+</div>
+</main>
+<footer class="portal-footer">
+<div class="wrap">
+<span>© <span data-year>2026</span> adiantaMed</span>
+<span><a href="/privacidade.html">Privacidade</a> · <a href="/termos.html">Termos</a> · <a href="/contato.html">Ajuda</a></span>
+</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+<script src="/config.js?v=1"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfmake@0.3.13/build/pdfmake.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfmake@0.3.13/build/vfs_fonts.js"></script>
+<script src="/portal.js?v=3"></script>
+<script>document.querySelectorAll('[data-year]').forEach(function(e){e.textContent=new Date().getFullYear()});</script>
+</body>
+</html>

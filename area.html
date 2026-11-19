@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="/style.css?v=3">
-<link rel="stylesheet" href="/portal.css?v=1">
+<link rel="stylesheet" href="/portal.css?v=3">
 </head>
 <body class="portal-body" data-page="area">
 <a class="skip" href="#conteudo">Pular para o conteúdo</a>
@@ -28,7 +28,7 @@
 <div class="wrap">
 <div class="portal-title">
 <div><h1 id="ola">Minhas operações</h1><p>Acompanhe cada plantão enviado, do envio ao pagamento.</p></div>
-<button class="btn btn-primary" type="button" data-nova>+ Nova operação</button>
+<div class="actions"><button class="btn btn-outline" type="button" data-dados>Meus dados</button><button class="btn btn-primary" type="button" data-nova>+ Nova operação</button></div>
 </div>
 <div class="alert" id="aviso" role="status" aria-live="polite" hidden></div>
 <div class="stats" id="stats"></div>
@@ -47,20 +47,46 @@
 <div class="sheet-head"><h2 id="nova-titulo">Nova operação</h2><button class="icon-btn" type="button" data-fechar aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
 <form id="form-nova" class="sheet-body">
 <div class="row-2">
-<div class="field"><label for="n-hosp">Hospital / empresa que paga</label><input id="n-hosp" name="hospital" required placeholder="Ex.: Hospital São Lucas"></div>
-<div class="field"><label for="n-data">Data do plantão</label><input id="n-data" name="data_plantao" type="date"></div>
+<div class="field"><label for="n-hosp">Hospital / empresa que paga <span class="hint">razão social</span></label><input id="n-hosp" name="hospital" list="lista-hospitais" autocomplete="off" required placeholder="Ex.: Hospital São Lucas Ltda"><datalist id="lista-hospitais"></datalist></div>
+<div class="field"><label for="n-hcnpj">CNPJ do hospital / pagador</label><input id="n-hcnpj" name="hospital_cnpj" inputmode="numeric" required placeholder="00.000.000/0001-00"></div>
 </div>
 <div class="row-2">
+<div class="field"><label for="n-hend">Endereço do hospital <span class="hint">rua, número, cidade/UF</span></label><input id="n-hend" name="hospital_endereco" required></div>
+<div class="field"><label for="n-nf">Nº da nota fiscal ou RPA</label><input id="n-nf" name="documento_fiscal" required></div>
+</div>
+<div class="row-2">
+<div class="field"><label for="n-hcn">Quem assina pelo hospital <span class="hint">financeiro ou coordenação · se souber</span></label><input id="n-hcn" name="hospital_contato_nome"></div>
+<div class="field"><label for="n-hce">E-mail de quem assina pelo hospital <span class="hint">se souber</span></label><input id="n-hce" name="hospital_contato_email" type="email"></div>
+</div>
+<div class="row-2">
+<div class="field"><label for="n-data">Data do plantão</label><input id="n-data" name="data_plantao" type="date" required></div>
 <div class="field"><label for="n-valor">Valor a receber do hospital (R$) <span class="hint">valor líquido da nota/RPA</span></label><input id="n-valor" name="valor_plantao" inputmode="decimal" placeholder="1.200,00" required></div>
-<div class="field"><label for="n-prev">Previsão de pagamento do hospital</label><input id="n-prev" name="previsao_pagamento" type="date"></div>
+<div class="field"><label for="n-prev">Previsão de pagamento do hospital</label><input id="n-prev" name="previsao_pagamento" type="date" required></div>
 </div>
 <div class="field"><label for="n-comp">Comprovante do plantão <span class="hint">NF, RPA, escala ou folha de ponto · obrigatório</span></label><input id="n-comp" name="comprovante" type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.heic,.webp,application/pdf,image/*" required></div>
-<div class="field"><label for="n-pes">Documentos pessoais <span class="hint">CRM e documento com foto · só na primeira operação</span></label><input id="n-pes" name="pessoal" type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.heic,.webp,application/pdf,image/*"></div>
 <div class="field"><label for="n-out">Outros documentos <span class="hint">opcional</span></label><input id="n-out" name="outros" type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.heic,.webp,application/pdf,image/*"></div>
 <div class="field"><label for="n-obs">Observações <span class="hint">opcional</span></label><textarea id="n-obs" name="observacao" placeholder="Ex.: 3 plantões de novembro no mesmo hospital"></textarea></div>
 <div class="alert" id="aviso-nova" role="status" aria-live="polite" hidden></div>
 <button class="btn btn-primary btn-block" type="submit">Enviar para análise</button>
 <p class="small">Arquivos em PDF, JPG ou PNG, até 10 MB cada. Seus documentos ficam guardados em ambiente privado.</p>
+</form>
+<div class="sheet-body nova-ok" id="nova-ok" hidden>
+<div class="ok-icone" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+<h3>Operação <span id="nova-ok-num"></span> em análise</h3>
+<p>Recebemos seus documentos. Agora a equipe da adiantaMed analisa a operação.</p>
+<p>Quando aprovarmos, você recebe por e-mail o <strong>contrato de cessão</strong> para assinar. Depois que você e o hospital assinarem, o pagamento cai na sua conta.</p>
+<button class="btn btn-primary" type="button" data-fechar-nova>Ver minhas operações</button>
+</div>
+</dialog>
+
+<dialog class="sheet" id="dlg-dados" aria-labelledby="dados-titulo">
+<div class="sheet-head"><h2 id="dados-titulo">Meus dados</h2><button class="icon-btn" type="button" data-fechar aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+<form id="form-dados" class="sheet-body" novalidate>
+<div class="alert" id="dados-nota" hidden></div>
+<p class="small">Esses dados vão no contrato de cessão de cada operação. Você preenche uma vez e eles ficam salvos.</p>
+<div id="dados-campos" style="display:flex;flex-direction:column;gap:18px"></div>
+<div class="alert" id="aviso-dados" role="status" aria-live="polite" hidden></div>
+<button class="btn btn-primary btn-block" type="submit">Salvar meus dados</button>
 </form>
 </dialog>
 
@@ -77,7 +103,7 @@
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
 <script src="/config.js?v=1"></script>
-<script src="/portal.js?v=1"></script>
+<script src="/portal.js?v=3"></script>
 <script>document.querySelectorAll('[data-year]').forEach(function(e){e.textContent=new Date().getFullYear()});</script>
 </body>
 </html>
