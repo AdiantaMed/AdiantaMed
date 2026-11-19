@@ -615,11 +615,11 @@
   function contaTexto(p) {
     return [p.pix ? 'Pix: ' + p.pix : '', p.banco ? p.banco + ' · ag. ' + (p.agencia || '—') + ' · conta ' + (p.conta || '—') + (p.tipo_conta ? ' (' + p.tipo_conta + ')' : '') : ''].filter(Boolean).join(' | ');
   }
-  var STATUS_SIGNER = { signed: ['Assinou', 'ok'], refused: ['Recusou', 'danger'] };
+  var STATUS_SIGNER = { signed: ['Assinou', 'ok'], refused: ['Recusou', 'danger'], viewed: ['Abriu, não assinou', 'warn'] };
   function badgeSigner(st) { var s = STATUS_SIGNER[st] || ['Pendente', 'warn']; return '<span class="badge ' + s[1] + '">' + s[0] + '</span>'; }
   var PAPEL_SIGNER = { cedente: 'Médico (cedente)', devedor: 'Hospital (devedor)', cessionario: 'Você (cessionário)' };
-  async function chamarZapsign(corpo) {
-    var r = await sb.functions.invoke('zapsign', { body: corpo });
+  async function chamarAssinatura(corpo) {
+    var r = await sb.functions.invoke('assinatura', { body: corpo });
     if (r.error) {
       var msg = r.error.message;
       try { var j = await r.error.context.json(); if (j && j.erro) msg = j.erro; } catch (e) { /* mantém */ }
@@ -661,7 +661,7 @@
       var pagas = ops.filter(function (o) { return ['paga', 'liquidada', 'atrasada'].indexOf(o.status) > -1; });
       $('#stats').innerHTML =
         '<div class="stat"><span class="k">Em análise</span><span class="v">' + an.length + '</span><span class="s">' + brl(soma(an, 'valor_plantao')) + ' em plantões</span></div>' +
-        '<div class="stat"><span class="k">Aguardando assinaturas</span><span class="v">' + as.length + '</span><span class="s">contratos na ZapSign</span></div>' +
+        '<div class="stat"><span class="k">Aguardando assinaturas</span><span class="v">' + as.length + '</span><span class="s">contratos enviados</span></div>' +
         '<div class="stat"><span class="k">A pagar aos médicos</span><span class="v">' + brl(soma(pg, 'valor_liquido')) + '</span><span class="s">' + pg.length + ' boletas assinadas</span></div>' +
         '<div class="stat"><span class="k">A receber dos hospitais</span><span class="v">' + brl(soma(abertos, 'valor_plantao')) + '</span><span class="s">' + abertos.length + ' boletas pagas em aberto</span></div>' +
         '<div class="stat"><span class="k">Total antecipado</span><span class="v">' + brl(soma(pagas, 'valor_liquido')) + '</span><span class="s">' + pagas.length + ' boletas pagas</span></div>';
@@ -822,7 +822,7 @@
         if (!empresa.email) falta.push('Configurações: seu e-mail (para você assinar como cessionário)');
         if (!docsCad.some(function (d) { return d.tipo === 'identidade'; })) falta.push('médico: cópia do RG/CNH');
         return '<div class="box acao"><h3>Decisão</h3>' +
-          '<p>Confira os documentos e os dados abaixo. Ao aprovar, o contrato de cessão é gerado e enviado pela ZapSign para o médico, para o hospital' + (empresa.email ? ' e para você' : '') + ' assinarem.</p>' +
+          '<p>Confira os documentos e os dados abaixo. Ao aprovar, o contrato de cessão é gerado e enviado pela Autentique para o médico, para o hospital' + (empresa.email ? ' e para você' : '') + ' assinarem.</p>' +
           (falta.length ? '<div class="alert alert-erro">Antes de enviar, preencha: ' + esc(falta.join('; ')) + '.</div>' : '<div class="alert alert-ok">Tudo pronto para gerar o contrato.</div>') +
           '<div class="acoes-linha">' +
           '<button class="btn btn-primary" type="button" data-acao="enviar"' + (falta.length ? ' disabled' : '') + '>Enviar contrato de cessão</button>' +
@@ -834,7 +834,7 @@
           '<li><strong>Hospital:</strong> ' + esc(o.hospital_contato_nome || o.hospital) + ' &lt;' + esc(o.hospital_contato_email || '—') + '&gt;</li></ul>' +
           '<label class="check"><input type="checkbox" name="incluir_cess" checked> Incluir você (' + esc(empresa.email || 'sem e-mail') + ') como signatário cessionário</label>' +
           '<p class="small">Preço da cessão: <strong>' + brl(o.valor_liquido) + '</strong>. A boleta vai para "Aguardando assinaturas".</p>' +
-          '<button class="btn btn-primary" type="button" data-confirmar="enviar">Confirmar envio pela ZapSign</button></div>' +
+          '<button class="btn btn-primary" type="button" data-confirmar="enviar">Confirmar envio para assinatura</button></div>' +
           '<div data-painel="ajuste" hidden class="sub-painel"><h4>Pedir documento ou ajuste</h4><div class="field"><label for="aj-msg">Mensagem para o médico</label><textarea id="aj-msg" placeholder="Ex.: Falta a escala assinada do plantão de 14/11."></textarea></div>' +
           '<button class="btn btn-outline" type="button" data-confirmar="ajuste">Enviar pedido</button></div>' +
           '<div data-painel="negar" hidden class="sub-painel"><h4>Negar boleta</h4><div class="field"><label for="ng-motivo">Motivo (o médico vê)</label><textarea id="ng-motivo" placeholder="Ex.: Hospital fora da nossa política de crédito no momento."></textarea></div>' +
@@ -846,7 +846,7 @@
           (sg.length ? '<ul class="doc-list">' + sg.map(function (s) {
             return '<li><span class="doc-name"><strong>' + esc(PAPEL_SIGNER[s.papel] || s.papel) + '</strong> · ' + esc(s.nome) + '<small>' + esc(s.email) + '</small></span>' +
               '<span class="acoes-linha">' + badgeSigner(s.status) + (s.sign_url && s.status !== 'signed' ? '<button class="btn btn-outline btn-sm" type="button" data-copiar="' + esc(s.sign_url) + '">Copiar link</button>' : '') + '</span></li>';
-          }).join('') + '</ul>' : '<p class="small">Sem dados da ZapSign para esta boleta.</p>') +
+          }).join('') + '</ul>' : '<p class="small">Sem dados da assinatura para esta boleta.</p>') +
           '<p class="small">Enviado em ' + esc(dataHoraBR(o.enviado_assinatura_em) || '—') + '. Quando todos assinarem, a boleta passa sozinha para "Efetuar pagamento".</p>' +
           '<div class="acoes-linha"><button class="btn btn-outline" type="button" data-acao-direta="atualizar">Atualizar status agora</button>' +
           '<button class="btn btn-quiet" type="button" data-acao-direta="assinado-manual">Marcar como assinado manualmente</button></div></div>';
@@ -953,10 +953,10 @@
           if (up.error) throw up.error;
           var ins = await sb.from('documentos').insert({ operacao_id: o.id, cliente_id: o.cliente_id, tipo: 'contrato', nome_arquivo: 'Contrato para assinatura – operação ' + o.numero + '.pdf', caminho: caminho, tamanho: blob.size });
           if (ins.error) throw ins.error;
-          mostrar($('#aviso-op'), 'info', 'Enviando para a ZapSign…');
-          await chamarZapsign({ acao: 'enviar', operacao_id: o.id, caminho: caminho, incluir_cessionario: $('[name=incluir_cess]', corpo).checked });
+          mostrar($('#aviso-op'), 'info', 'Enviando para a Autentique…');
+          var env = await chamarAssinatura({ acao: 'enviar', operacao_id: o.id, caminho: caminho, incluir_cessionario: $('[name=incluir_cess]', corpo).checked });
           await carregar(); await abrirOp(id);
-          okOp('Contrato enviado pela ZapSign. A boleta foi para "Aguardando assinaturas".');
+          okOp('Contrato enviado pela Autentique' + (env && env.sandbox ? ' em MODO TESTE (sem validade jurídica)' : '') + '. A boleta foi para "Aguardando assinaturas".');
         } catch (err) { bEnv.disabled = false; erroOp(traduzErro(err)); }
       });
       var bAj = $('[data-confirmar="ajuste"]', corpo);
@@ -976,7 +976,7 @@
           var a = b.getAttribute('data-acao-direta');
           if (a === 'atualizar') {
             b.disabled = true;
-            try { await chamarZapsign({ acao: 'atualizar', operacao_id: id }); await carregar(); await abrirOp(id); okOp('Status das assinaturas atualizado.'); }
+            try { await chamarAssinatura({ acao: 'atualizar', operacao_id: id }); await carregar(); await abrirOp(id); okOp('Status das assinaturas atualizado.'); }
             catch (err) { b.disabled = false; erroOp(traduzErro(err)); }
           } else if (a === 'assinado-manual') {
             if (!confirm('Confirmar que TODAS as partes assinaram (fora do fluxo automático)?')) return;
@@ -1051,6 +1051,21 @@
 
     irAba('analise');
     await carregar();
+    sincronizarAssinaturas();
+
+    // Confere na Autentique as boletas que esperam assinatura (caso o webhook não tenha avisado)
+    async function sincronizarAssinaturas() {
+      var pend = daEtapa('assinatura').filter(function (o) { return internos[o.id] && internos[o.id].zapsign_token; });
+      var mudou = false;
+      for (var i = 0; i < pend.length; i++) {
+        var antes = JSON.stringify((internos[pend[i].id] || {}).zapsign_signers || []);
+        try {
+          var r = await chamarAssinatura({ acao: 'atualizar', operacao_id: pend[i].id });
+          if (r && (r.status === 'signed' || JSON.stringify(r.signers || []) !== antes)) mudou = true;
+        } catch (e) { /* silencioso: o botão "Atualizar status agora" mostra o erro */ }
+      }
+      if (mudou) await carregar();
+    }
   }
 
   /* ================= Contrato de cessão ================= */

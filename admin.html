@@ -38,7 +38,7 @@
 <button class="page-tab" type="button" role="tab" data-aba="config" aria-selected="false">Configurações</button>
 </div>
 <section data-secao="analise"><p class="etapa-dica">Boletas novas enviadas pelos médicos. Abra, confira os documentos e decida: enviar o contrato de cessão ou negar.</p><div id="lista-analise"><p class="loading">Carregando…</p></div></section>
-<section data-secao="assinatura" hidden><p class="etapa-dica">Contratos enviados pela ZapSign. Quando médico, hospital e você assinarem, a boleta passa sozinha para "Efetuar pagamento".</p><div id="lista-assinatura"></div></section>
+<section data-secao="assinatura" hidden><p class="etapa-dica">Contratos enviados pela Autentique. Quando médico, hospital e você assinarem, a boleta passa sozinha para "Efetuar pagamento" (o painel confere o status sempre que você abre esta página).</p><div id="lista-assinatura"></div></section>
 <section data-secao="pagamento" hidden><p class="etapa-dica">Contratos assinados. Faça o Pix/TED para o médico e confirme aqui: a boleta vai para o histórico.</p><div id="lista-pagamento"></div></section>
 <section data-secao="historico" hidden>
 <div class="toolbar"><div class="chips">
@@ -108,7 +108,7 @@
 <script src="/config.js?v=1"></script>
 <script src="https://cdn.jsdelivr.net/npm/pdfmake@0.3.13/build/pdfmake.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pdfmake@0.3.13/build/vfs_fonts.js"></script>
-<script src="/portal.js?v=3"></script>
+<script src="/portal.js?v=4"></script>
 <script>document.querySelectorAll('[data-year]').forEach(function(e){e.textContent=new Date().getFullYear()});</script>
 </body>
 </html>
