@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="azul">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Área do cliente — adiantaMed</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#C8142F">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/style.css?v=3">
+<link rel="stylesheet" href="/portal.css?v=1">
+</head>
+<body class="portal-body" data-page="entrar">
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+<header class="portal-header">
+<div class="wrap">
+<a class="brand" href="/" aria-label="adiantaMed — voltar ao site"><img src="/logo.svg" alt="adiantaMed" width="204" height="26"></a>
+<a class="btn btn-quiet btn-sm" href="/">Voltar ao site</a>
+</div>
+</header>
+<main id="conteudo">
+
+<div class="auth-wrap">
+<div class="auth-card">
+<div>
+<h1>Área do cliente</h1>
+<p class="lead-sm">Envie seus plantões e acompanhe cada antecipação.</p>
+</div>
+<div class="tabs" role="tablist">
+<button class="tab" type="button" role="tab" data-tab="entrar" aria-selected="true">Entrar</button>
+<button class="tab" type="button" role="tab" data-tab="criar" aria-selected="false">Criar conta</button>
+</div>
+<div class="alert" id="aviso" role="status" aria-live="polite" hidden></div>
+
+<section id="painel-entrar">
+<form id="form-entrar" class="stack-form">
+<div class="field"><label for="e-email">E-mail</label><input id="e-email" name="email" type="email" autocomplete="email" required></div>
+<div class="field"><label for="e-senha">Senha</label><input id="e-senha" name="senha" type="password" autocomplete="current-password" required></div>
+<button class="btn btn-primary btn-block" type="submit">Entrar</button>
+<button class="link-btn" type="button" data-ir="recuperar">Esqueci minha senha</button>
+</form>
+</section>
+
+<section id="painel-criar" hidden>
+<form id="form-criar" class="stack-form">
+<div class="field"><label for="c-nome">Nome completo</label><input id="c-nome" name="nome" autocomplete="name" required></div>
+<div class="field"><label for="c-email">E-mail</label><input id="c-email" name="email" type="email" autocomplete="email" required></div>
+<div class="field"><label for="c-tel">WhatsApp</label><input id="c-tel" name="telefone" type="tel" autocomplete="tel" placeholder="(19) 99999-9999" required></div>
+<div class="row-2">
+<div class="field"><label for="c-tipo">Você recebe como</label><select id="c-tipo" name="tipo_pessoa" required><option value="PJ">Empresa (PJ)</option><option value="PF">Pessoa física (RPA)</option></select></div>
+<div class="field"><label for="c-doc">CPF ou CNPJ</label><input id="c-doc" name="cpf_cnpj" inputmode="numeric" required></div>
+</div>
+<div class="row-2">
+<div class="field"><label for="c-crm">CRM</label><input id="c-crm" name="crm" inputmode="numeric" required></div>
+<div class="field"><label for="c-uf">UF do CRM</label><select id="c-uf" name="crm_uf" required><option value="">UF</option><option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option></select></div>
+</div>
+<div class="field"><label for="c-senha">Senha <span class="hint">mínimo de 8 caracteres</span></label><input id="c-senha" name="senha" type="password" autocomplete="new-password" minlength="8" required></div>
+<div class="field"><label for="c-senha2">Repita a senha</label><input id="c-senha2" name="senha2" type="password" autocomplete="new-password" minlength="8" required></div>
+<label class="check"><input type="checkbox" name="aceite" required> Li e concordo com a <a href="/privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a> e os <a href="/termos.html" target="_blank" rel="noopener">Termos de Uso</a>.</label>
+<button class="btn btn-primary btn-block" type="submit">Criar minha conta</button>
+</form>
+</section>
+
+<section id="painel-recuperar" hidden>
+<form id="form-recuperar" class="stack-form">
+<p class="lead-sm">Informe seu e-mail e enviaremos um link para criar uma nova senha.</p>
+<div class="field"><label for="r-email">E-mail</label><input id="r-email" name="email" type="email" autocomplete="email" required></div>
+<button class="btn btn-primary btn-block" type="submit">Enviar link</button>
+<button class="link-btn" type="button" data-ir="entrar">Voltar para o login</button>
+</form>
+</section>
+</div>
+</div>
+</main>
+<footer class="portal-footer">
+<div class="wrap">
+<span>© <span data-year>2026</span> adiantaMed</span>
+<span><a href="/privacidade.html">Privacidade</a> · <a href="/termos.html">Termos</a> · <a href="/contato.html">Ajuda</a></span>
+</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+<script src="/config.js?v=1"></script>
+<script src="/portal.js?v=1"></script>
+<script>document.querySelectorAll('[data-year]').forEach(function(e){e.textContent=new Date().getFullYear()});</script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="azul">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nova senha — adiantaMed</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#C8142F">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/style.css?v=3">
+<link rel="stylesheet" href="/portal.css?v=1">
+</head>
+<body class="portal-body" data-page="nova-senha">
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+<header class="portal-header">
+<div class="wrap">
+<a class="brand" href="/" aria-label="adiantaMed — voltar ao site"><img src="/logo.svg" alt="adiantaMed" width="204" height="26"></a>
+<a class="btn btn-quiet btn-sm" href="/">Voltar ao site</a>
+</div>
+</header>
+<main id="conteudo">
+
+<div class="auth-wrap">
+<div class="auth-card">
+<div><h1>Criar nova senha</h1><p class="lead-sm">Escolha uma senha nova para acessar sua área.</p></div>
+<div class="alert" id="aviso" role="status" aria-live="polite" hidden></div>
+<form id="form-nova-senha" class="stack-form">
+<div class="field"><label for="n-senha">Nova senha <span class="hint">mínimo de 8 caracteres</span></label><input id="n-senha" name="senha" type="password" autocomplete="new-password" minlength="8" required></div>
+<div class="field"><label for="n-senha2">Repita a nova senha</label><input id="n-senha2" name="senha2" type="password" autocomplete="new-password" minlength="8" required></div>
+<button class="btn btn-primary btn-block" type="submit">Salvar nova senha</button>
+</form>
+</div>
+</div>
+</main>
+<footer class="portal-footer">
+<div class="wrap">
+<span>© <span data-year>2026</span> adiantaMed</span>
+<span><a href="/privacidade.html">Privacidade</a> · <a href="/termos.html">Termos</a> · <a href="/contato.html">Ajuda</a></span>
+</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+<script src="/config.js?v=1"></script>
+<script src="/portal.js?v=1"></script>
+<script>document.querySelectorAll('[data-year]').forEach(function(e){e.textContent=new Date().getFullYear()});</script>
+</body>
+</html>

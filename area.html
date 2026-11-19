@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="azul">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minhas operações — adiantaMed</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#C8142F">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/style.css?v=3">
+<link rel="stylesheet" href="/portal.css?v=1">
+</head>
+<body class="portal-body" data-page="area">
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+<header class="portal-header">
+<div class="wrap">
+<a class="brand" href="/" aria-label="adiantaMed — voltar ao site"><img src="/logo.svg" alt="adiantaMed" width="204" height="26"></a>
+<div class="portal-user" data-portal-user></div>
+</div>
+</header>
+<main id="conteudo">
+
+<div class="wrap">
+<div class="portal-title">
+<div><h1 id="ola">Minhas operações</h1><p>Acompanhe cada plantão enviado, do envio ao pagamento.</p></div>
+<button class="btn btn-primary" type="button" data-nova>+ Nova operação</button>
+</div>
+<div class="alert" id="aviso" role="status" aria-live="polite" hidden></div>
+<div class="stats" id="stats"></div>
+<div class="toolbar">
+<div class="chips" role="group" aria-label="Filtrar operações">
+<button class="chip" type="button" data-filtro="todas" aria-pressed="true">Todas</button>
+<button class="chip" type="button" data-filtro="andamento" aria-pressed="false">Em andamento</button>
+<button class="chip" type="button" data-filtro="pagas" aria-pressed="false">Pagas</button>
+<button class="chip" type="button" data-filtro="encerradas" aria-pressed="false">Recusadas / canceladas</button>
+</div>
+</div>
+<div id="lista"><p class="loading">Carregando suas operações…</p></div>
+</div>
+
+<dialog class="sheet" id="dlg-nova" aria-labelledby="nova-titulo">
+<div class="sheet-head"><h2 id="nova-titulo">Nova operação</h2><button class="icon-btn" type="button" data-fechar aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+<form id="form-nova" class="sheet-body">
+<div class="row-2">
+<div class="field"><label for="n-hosp">Hospital / empresa que paga</label><input id="n-hosp" name="hospital" required placeholder="Ex.: Hospital São Lucas"></div>
+<div class="field"><label for="n-data">Data do plantão</label><input id="n-data" name="data_plantao" type="date"></div>
+</div>
+<div class="row-2">
+<div class="field"><label for="n-valor">Valor a receber do hospital (R$) <span class="hint">valor líquido da nota/RPA</span></label><input id="n-valor" name="valor_plantao" inputmode="decimal" placeholder="1.200,00" required></div>
+<div class="field"><label for="n-prev">Previsão de pagamento do hospital</label><input id="n-prev" name="previsao_pagamento" type="date"></div>
+</div>
+<div class="field"><label for="n-comp">Comprovante do plantão <span class="hint">NF, RPA, escala ou folha de ponto · obrigatório</span></label><input id="n-comp" name="comprovante" type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.heic,.webp,application/pdf,image/*" required></div>
+<div class="field"><label for="n-pes">Documentos pessoais <span class="hint">CRM e documento com foto · só na primeira operação</span></label><input id="n-pes" name="pessoal" type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.heic,.webp,application/pdf,image/*"></div>
+<div class="field"><label for="n-out">Outros documentos <span class="hint">opcional</span></label><input id="n-out" name="outros" type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.heic,.webp,application/pdf,image/*"></div>
+<div class="field"><label for="n-obs">Observações <span class="hint">opcional</span></label><textarea id="n-obs" name="observacao" placeholder="Ex.: 3 plantões de novembro no mesmo hospital"></textarea></div>
+<div class="alert" id="aviso-nova" role="status" aria-live="polite" hidden></div>
+<button class="btn btn-primary btn-block" type="submit">Enviar para análise</button>
+<p class="small">Arquivos em PDF, JPG ou PNG, até 10 MB cada. Seus documentos ficam guardados em ambiente privado.</p>
+</form>
+</dialog>
+
+<dialog class="sheet" id="dlg-ver" aria-labelledby="ver-titulo">
+<div class="sheet-head"><h2 id="ver-titulo">Operação</h2><button class="icon-btn" type="button" data-fechar aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+<div class="sheet-body" id="ver-corpo"></div>
+</dialog>
+</main>
+<footer class="portal-footer">
+<div class="wrap">
+<span>© <span data-year>2026</span> adiantaMed</span>
+<span><a href="/privacidade.html">Privacidade</a> · <a href="/termos.html">Termos</a> · <a href="/contato.html">Ajuda</a></span>
+</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+<script src="/config.js?v=1"></script>
+<script src="/portal.js?v=1"></script>
+<script>document.querySelectorAll('[data-year]').forEach(function(e){e.textContent=new Date().getFullYear()});</script>
+</body>
+</html>
