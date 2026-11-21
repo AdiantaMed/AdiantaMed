@@ -678,6 +678,7 @@
         var feitas = sg.filter(function (s) { return s.status === 'signed'; }).length;
         extra = '<span>' + feitas + ' de ' + sg.length + ' assinaturas</span>' + (sg.some(function (s) { return s.status === 'refused'; }) ? '<span class="badge danger">recusa</span>' : '');
       }
+      if (et === 'analise') extra = crmOk(p) ? '<span class="badge ok">CRM verificado</span>' : '<span class="badge warn">CRM não verificado</span>';
       if (et === 'pagamento') extra = '<span>Pagar: ' + esc(contaTexto(p) || 'conta não informada') + '</span>';
       if (o.status === 'recusada' && o.motivo_recusa) extra = '<span>Motivo: ' + esc(o.motivo_recusa) + '</span>';
       var valor = (et === 'pagamento' || et === 'historico') && o.valor_liquido != null
@@ -775,7 +776,7 @@
         '<dl class="kv">' +
         '<div><dt>E-mail</dt><dd>' + esc(c.email || '—') + '</dd></div><div><dt>WhatsApp</dt><dd>' + esc(c.telefone || '—') + '</dd></div>' +
         '<div><dt>CPF</dt><dd>' + esc(c.cpf || '—') + '</dd></div><div><dt>RG</dt><dd>' + esc(c.rg ? c.rg + ' ' + (c.rg_orgao || '') : '—') + '</dd></div>' +
-        '<div><dt>CRM</dt><dd>' + esc(c.crm ? c.crm + '/' + (c.crm_uf || '') : '—') + '</dd></div>' +
+        '<div><dt>CRM</dt><dd>' + esc(c.crm ? c.crm + '/' + (c.crm_uf || '') : '—') + (c.crm ? (crmOk(c) ? ' <span class="badge ok">verificado ' + esc(dataBR(c.crm_verificado_em)) + '</span>' : ' <span class="badge warn">' + esc(c.crm_situacao || 'não verificado') + '</span>') : '') + '</dd></div>' +
         (c.tipo_pessoa === 'PJ' ? '<div><dt>Empresa</dt><dd>' + esc(c.razao_social || '—') + '<br><span class="small">CNPJ ' + esc(c.cnpj || '—') + '</span></dd></div>' : '') +
         '<div><dt>Endereço</dt><dd>' + esc(enderecoCompleto(c) || '—') + '</dd></div><div><dt>Conta</dt><dd>' + esc(contaTexto(c) || '—') + '</dd></div>' +
         '<div><dt>Cliente desde</dt><dd>' + esc(dataBR(c.criado_em)) + '</dd></div></dl>' +
@@ -821,6 +822,7 @@
         if (!o.hospital_contato_email) falta.push('operação: e-mail de quem assina pelo hospital');
         if (!empresa.email) falta.push('Configurações: seu e-mail (para você assinar como cessionário)');
         if (!docsCad.some(function (d) { return d.tipo === 'identidade'; })) falta.push('médico: cópia do RG/CNH');
+        if (!crmOk(p)) falta.push('verificação do CRM no CFM (quadro acima)');
         return '<div class="box acao"><h3>Decisão</h3>' +
           '<p>Confira os documentos e os dados abaixo. Ao aprovar, o contrato de cessão é gerado e enviado pela Autentique para o médico, para o hospital' + (empresa.email ? ' e para você' : '') + ' assinarem.</p>' +
           (falta.length ? '<div class="alert alert-erro">Antes de enviar, preencha: ' + esc(falta.join('; ')) + '.</div>' : '<div class="alert alert-ok">Tudo pronto para gerar o contrato.</div>') +
@@ -887,6 +889,7 @@
       corpo.innerHTML =
         '<div class="alert" hidden id="aviso-op"></div>' +
         '<div>' + badge(o.status, 'admin') + '</div>' +
+        boxCrm(o, p) +
         caixaAcoes(o, p, docsCad) +
         '<div class="box"><h3>Documentos da boleta</h3>' + renderDocs(docs) +
         '<form id="form-doc" class="row-2"><div class="field"><label for="f-tipo">Tipo</label><select id="f-tipo" name="tipo"><option value="comprovante">Comprovante do plantão</option><option value="contrato">Contrato</option><option value="outro">Outro</option></select></div>' +
@@ -924,6 +927,21 @@
         Object.keys(STATUS).map(function (k) { return '<option value="' + k + '"' + (k === o.status ? ' selected' : '') + '>' + esc(STATUS[k].admin) + '</option>'; }).join('') +
         '</select></div></div><button class="btn btn-outline btn-sm" type="button" data-acao-direta="status-manual">Aplicar status</button></details>';
       ligarAbrirDocs(corpo);
+
+      // verificação do CRM
+      var bCrm = $('[data-crm-salvar]', corpo);
+      if (bCrm) bCrm.addEventListener('click', async function () {
+        if (!$('#crm-conferi', corpo).checked) return erroOp('Marque que você conferiu o nome, o número e a UF no site do CFM.');
+        bCrm.disabled = true;
+        var sit = $('#crm-sit', corpo).value;
+        var r = await sb.from('perfis').update({ crm_verificado_em: new Date().toISOString(), crm_verificado_por: sessao.user.id, crm_situacao: sit }).eq('id', o.cliente_id);
+        if (r.error) { bCrm.disabled = false; return erroOp(traduzErro(r.error)); }
+        await carregar(); await abrirOp(id);
+        if (sit === 'Regular') okOp('CRM verificado. A verificação fica salva no cadastro do médico.');
+        else erroOp('Verificação registrada com situação "' + sit + '". O envio do contrato fica bloqueado.');
+      });
+      var bRefazer = $('[data-crm-refazer]', corpo);
+      if (bRefazer) bRefazer.addEventListener('click', function () { $('#crm-form', corpo).hidden = false; bRefazer.hidden = true; });
 
       async function atualizarOp(campos, msgCliente, msgOk) {
         var r = await sb.from('operacoes').update(campos).eq('id', id);
@@ -1128,7 +1146,8 @@
       ? '**' + v(e.nome) + '**, pessoa jurídica de direito privado, inscrita no CNPJ sob o nº ' + v(e.documento) + ', com sede em ' + v(e.endereco) +
         ', neste ato representada por **' + v(e.representante_nome) + '**, ' + v(e.representante_qualificacao) + ', inscrito(a) no CPF sob o nº ' + v(e.representante_cpf) + ', doravante denominada **CESSIONÁRIA**.'
       : '**' + v(e.nome) + '**, ' + v(e.representante_qualificacao) + ', inscrito(a) no CPF sob o nº ' + v(e.documento) + ', residente e domiciliado(a) em ' + v(e.endereco) + ', doravante denominado **CESSIONÁRIO**.';
-    var devedor = '**' + v(o.hospital) + '**, inscrito no CNPJ sob o nº ' + v(o.hospital_cnpj) + ', com endereço em ' + v(o.hospital_endereco);
+    var devedor = '**' + v(o.hospital) + '**, inscrito no CNPJ sob o nº ' + v(o.hospital_cnpj) + ', com endereço em ' + v(o.hospital_endereco) +
+      ', neste ato representado por **' + v(o.hospital_contato_nome) + '**, que declara ter poderes para assinar este instrumento em seu nome, doravante denominado **DEVEDOR**.';
     var contaCedente = [p.pix ? 'Chave Pix: ' + p.pix : '', p.banco ? p.banco + ', agência ' + v(p.agencia) + ', conta ' + v(p.conta) + (p.tipo_conta ? ' (' + p.tipo_conta + ')' : '') : ''].filter(Boolean).join(' · ') || VAZIO;
     var contaCess = [e.banco ? e.banco + ', agência ' + v(e.agencia) + ', conta ' + v(e.conta) : '', e.pix ? 'Chave Pix: ' + e.pix : ''].filter(Boolean).join(' · ') || VAZIO;
     var titularCedente = pj ? v(p.razao_social) : v(p.nome);
@@ -1144,10 +1163,12 @@
     P(cedente);
     P('e, de outro lado,');
     P(cess);
-    P('As partes acima, em conjunto denominadas "Partes", têm entre si justo e contratado o presente Instrumento Particular de Cessão de Crédito ("Contrato"), que se regerá pelas cláusulas a seguir e pelos arts. 286 a 298 do Código Civil.');
+    P('e, ainda, na qualidade de **INTERVENIENTE ANUENTE**,');
+    P(devedor);
+    P('CEDENTE e ' + CE + ', em conjunto denominados "Partes", com a interveniência e anuência do DEVEDOR, têm entre si justo e contratado o presente Instrumento Particular de Cessão de Crédito ("Contrato"), que se regerá pelas cláusulas a seguir e pelos arts. 286 a 298 do Código Civil.');
 
     H('CLÁUSULA 1ª – DO OBJETO');
-    P('1.1. O CEDENTE cede e transfere ao(à) ' + CE + ', em caráter definitivo, irrevogável e irretratável, a totalidade do crédito descrito no **Anexo I** ("Crédito"), de sua titularidade contra ' + devedor + ' ("DEVEDOR"), decorrente de serviços médicos (plantão) efetivamente prestados, com todos os direitos, privilégios, garantias e acessórios a ele inerentes.');
+    P('1.1. O CEDENTE cede e transfere ao(à) ' + CE + ', em caráter definitivo, irrevogável e irretratável, a totalidade do crédito descrito no **Anexo I** ("Crédito"), de sua titularidade contra o DEVEDOR, decorrente de serviços médicos (plantão) efetivamente prestados, com todos os direitos, privilégios, garantias e acessórios a ele inerentes.');
 
     H('CLÁUSULA 2ª – DO PREÇO E DO PAGAMENTO');
     P('2.1. Pela cessão, o(a) ' + CE + ' pagará ao CEDENTE o valor de **' + dinheiro(o.valor_liquido) + '** ("Preço"), em até ' + v(par.prazo) + ' contado(s) da assinatura deste Contrato por todas as Partes, mediante transferência para a conta do CEDENTE indicada no Anexo I.');
@@ -1167,22 +1188,30 @@
     P('6.1. O CEDENTE autoriza o(a) ' + CE + ' a notificar o DEVEDOR desta cessão, nos termos do art. 290 do Código Civil, inclusive por meio do Termo de Notificação anexo, para que o pagamento do Crédito seja feito diretamente ao(à) ' + CE + '. O CEDENTE se compromete a assinar os documentos e prestar as informações necessárias para esse fim.');
     P('6.2. Se o CEDENTE receber, por qualquer motivo, valores relativos ao Crédito, deverá repassá-los integralmente ao(à) ' + CE + ' em até 2 (dois) dias úteis do recebimento, sob pena de multa de 10% (dez por cento) sobre o valor recebido, sem prejuízo da atualização pela taxa legal.');
 
-    H('CLÁUSULA 7ª – DOS TRIBUTOS');
-    P('7.1. Cada Parte responde pelos tributos de que seja contribuinte em razão deste Contrato, na forma da legislação aplicável.');
+    H('CLÁUSULA 7ª – DA INTERVENIÊNCIA E ANUÊNCIA DO DEVEDOR');
+    P('7.1. O DEVEDOR, ao assinar este Contrato, declara-se ciente e notificado da presente cessão, para os fins do art. 290 do Código Civil, e com ela expressamente concorda.');
+    P('7.2. O DEVEDOR confirma que o Crédito existe, corresponde a serviços efetivamente prestados pelo CEDENTE e tem o valor e o vencimento indicados no Anexo I, e declara que, nesta data, não possui compensações, descontos, glosas ou quaisquer outras exceções a opor ao Crédito (art. 294 do Código Civil).');
+    P('7.3. O DEVEDOR se obriga a pagar o Crédito, no vencimento, diretamente ao(à) ' + CE + ', na conta indicada no Anexo I, reconhecendo que o pagamento feito a qualquer outra pessoa, inclusive ao CEDENTE, não o libera da obrigação.');
+    P('7.4. O DEVEDOR declara que não há, em contrato ou em sua relação com o CEDENTE, cláusula que proíba ou condicione a cessão do Crédito.');
+    P('7.5. A interveniência do DEVEDOR limita-se ao disposto nesta cláusula, não o tornando responsável pelas demais obrigações assumidas entre CEDENTE e ' + CE + '.');
 
-    H('CLÁUSULA 8ª – DA PROTEÇÃO DE DADOS');
-    P('8.1. O CEDENTE autoriza o tratamento dos dados pessoais constantes deste Contrato para a execução da cessão, a notificação do DEVEDOR e o cumprimento de obrigações legais e regulatórias, nos termos da Lei nº 13.709/2018 (LGPD).');
+    H('CLÁUSULA 8ª – DOS TRIBUTOS');
+    P('8.1. Cada Parte responde pelos tributos de que seja contribuinte em razão deste Contrato, na forma da legislação aplicável.');
 
-    H('CLÁUSULA 9ª – DAS DISPOSIÇÕES GERAIS');
-    P('9.1. As Partes reconhecem a validade da assinatura deste Contrato por meio eletrônico, nos termos da Lei nº 14.063/2020 e do art. 10, § 2º, da Medida Provisória nº 2.200-2/2001, admitindo como válidos a autoria e a integridade do documento assinado.');
-    P('9.2. Este Contrato obriga as Partes e seus sucessores a qualquer título.');
-    P('9.3. Fica eleito o foro da comarca de ' + v(par.foro) + ' para dirimir quaisquer questões oriundas deste Contrato, com renúncia a qualquer outro, por mais privilegiado que seja.');
-    P('E, por estarem justas e contratadas, as Partes assinam o presente Contrato, juntamente com 2 (duas) testemunhas.');
+    H('CLÁUSULA 9ª – DA PROTEÇÃO DE DADOS');
+    P('9.1. O CEDENTE autoriza o tratamento dos dados pessoais constantes deste Contrato para a execução da cessão, a notificação do DEVEDOR e o cumprimento de obrigações legais e regulatórias, nos termos da Lei nº 13.709/2018 (LGPD).');
+
+    H('CLÁUSULA 10ª – DAS DISPOSIÇÕES GERAIS');
+    P('10.1. As Partes e o DEVEDOR reconhecem a validade da assinatura deste Contrato por meio eletrônico, nos termos da Lei nº 14.063/2020 e do art. 10, § 2º, da Medida Provisória nº 2.200-2/2001, admitindo como válidos a autoria e a integridade do documento assinado.');
+    P('10.2. Este Contrato obriga as Partes, o DEVEDOR e seus sucessores a qualquer título.');
+    P('10.3. Fica eleito o foro da comarca de ' + v(par.foro) + ' para dirimir quaisquer questões oriundas deste Contrato, com renúncia a qualquer outro, por mais privilegiado que seja.');
+    P('E, por estarem justas e contratadas, as Partes e o DEVEDOR, na qualidade de interveniente anuente, assinam o presente Contrato, juntamente com 2 (duas) testemunhas.');
     B.push({ k: 'local', t: local });
     B.push({ k: 'sig', itens: [
       { nome: titularCedente, papel: 'CEDENTE' + (pj ? ' – p/ ' + v(p.nome) : '') },
       { nome: v(e.nome), papel: CE + (cpj && e.representante_nome ? ' – p/ ' + e.representante_nome : '') }
     ] });
+    B.push({ k: 'sig', itens: [{ nome: v(o.hospital), papel: 'DEVEDOR – INTERVENIENTE ANUENTE – p/ ' + v(o.hospital_contato_nome) }] });
     B.push({ k: 'sig', itens: [{ nome: 'Testemunha 1', papel: 'Nome / CPF:' }, { nome: 'Testemunha 2', papel: 'Nome / CPF:' }] });
 
     B.push({ k: 'break' });
@@ -1203,6 +1232,7 @@
     ] });
     B.push({ k: 'local', t: local });
     B.push({ k: 'sig', itens: [{ nome: titularCedente, papel: 'CEDENTE' }, { nome: v(e.nome), papel: CE }] });
+    B.push({ k: 'sig', itens: [{ nome: v(o.hospital), papel: 'DEVEDOR – INTERVENIENTE ANUENTE' }] });
 
     if (par.notificacao) {
       B.push({ k: 'break' });
@@ -1219,9 +1249,9 @@
       P('A partir do recebimento desta notificação, o pagamento do crédito deverá ser feito **exclusivamente** a ' + v(e.nome) + ', na conta: **' + contaCess + '**. O pagamento feito a qualquer outra pessoa não extinguirá a obrigação.');
       B.push({ k: 'local', t: local });
       B.push({ k: 'sig', itens: [{ nome: titularCedente, papel: 'CEDENTE' }, { nome: v(e.nome), papel: CE }] });
-      H('CIÊNCIA E CONFIRMAÇÃO DO DEVEDOR');
-      P('Declaramos ciência da cessão acima, confirmamos a existência do crédito no valor indicado, com vencimento previsto em ' + (o.previsao_pagamento ? dataBR(o.previsao_pagamento) : '____/____/______') + ', e que, nesta data, não há compensações, descontos ou glosas a opor. O pagamento será feito na conta indicada.');
-      B.push({ k: 'sig', itens: [{ nome: v(o.hospital), papel: 'Nome, cargo e data:' }] });
+      H('CIENTE DO DEVEDOR');
+      P('Recebemos esta notificação e confirmamos a ciência e a anuência à cessão, nos termos da Cláusula 7ª do Contrato.');
+      B.push({ k: 'sig', itens: [{ nome: v(o.hospital), papel: 'DEVEDOR – p/ ' + v(o.hospital_contato_nome) }] });
     }
     return B;
   }
@@ -1294,12 +1324,36 @@
       }
     };
   }
+  var CFM_BUSCA = 'https://portal.cfm.org.br/busca-medicos/';
+  function crmOk(p) { return !!(p && p.crm_verificado_em && p.crm_situacao === 'Regular'); }
+  function boxCrm(o, p) {
+    var crm = p.crm ? p.crm + '/' + (p.crm_uf || '?') : '';
+    var feito = p.crm_verificado_em;
+    var editavel = etapaDe(o.status) === 'analise';
+    var status = !crm ? '<div class="alert alert-erro">O médico ainda não informou o CRM no cadastro.</div>'
+      : feito ? (crmOk(p)
+        ? '<div class="alert alert-ok"><strong>✔ CRM ' + esc(crm) + ' verificado no CFM</strong> em ' + esc(dataHoraBR(feito)) + ' · Situação: Regular.</div>'
+        : '<div class="alert alert-erro"><strong>CRM ' + esc(crm) + ': situação "' + esc(p.crm_situacao || '?') + '"</strong> na verificação de ' + esc(dataHoraBR(feito)) + '. Não envie o contrato.</div>')
+      : '<div class="alert alert-erro"><strong>CRM ainda não verificado.</strong> Confira antes de enviar o contrato.</div>';
+    var form = crm && editavel ?
+      '<div id="crm-form" class="sub-painel"' + (feito ? ' hidden' : '') + '>' +
+      '<ol class="small"><li>Abra a busca do CFM e pesquise o CRM <strong>' + esc(p.crm) + '</strong>, UF <strong>' + esc(p.crm_uf || '?') + '</strong>.</li>' +
+      '<li>Confira se o nome é <strong>' + esc(p.nome || '—') + '</strong> e se a situação está <strong>Regular</strong> (ativo).</li></ol>' +
+      '<div class="acoes-linha"><a class="btn btn-outline btn-sm" href="' + CFM_BUSCA + '" target="_blank" rel="noopener">Abrir busca do CFM</a></div>' +
+      '<div class="row-2"><div class="field"><label for="crm-sit">Resultado no CFM</label><select id="crm-sit">' +
+      '<option value="Regular">Regular: nome e CRM conferem</option><option value="Irregular">Irregular / inativo / cassado</option><option value="Não confere">Nome ou UF não conferem</option><option value="Não encontrado">Não encontrado</option></select></div></div>' +
+      '<label class="check"><input type="checkbox" id="crm-conferi"> Conferi no site do CFM o nome, o número e a UF do CRM</label>' +
+      '<button class="btn btn-primary btn-sm" type="button" data-crm-salvar>Registrar verificação</button></div>' +
+      (feito ? '<button class="btn btn-quiet btn-sm" type="button" data-crm-refazer>Refazer verificação</button>' : '') : '';
+    return '<div class="box"><h3>Verificação do CRM</h3>' + status + form + '</div>';
+  }
   function faltandoContrato(o, p, e) {
     var f = faltandoNoCadastro(p).map(function (x) { return 'médico: ' + x; });
     function req(obj, campo, rot) { if (!String(obj[campo] == null ? '' : obj[campo]).trim()) f.push(rot); }
     req(o, 'hospital_cnpj', 'operação: CNPJ do hospital'); req(o, 'hospital_endereco', 'operação: endereço do hospital');
     req(o, 'documento_fiscal', 'operação: nº da NF/RPA'); req(o, 'previsao_pagamento', 'operação: vencimento previsto');
     req(o, 'valor_liquido', 'operação: valor líquido ao médico (preço)');
+    req(o, 'hospital_contato_nome', 'operação: nome de quem assina pelo hospital');
     req(e, 'nome', 'cessionário: nome / razão social'); req(e, 'documento', 'cessionário: CPF/CNPJ'); req(e, 'endereco', 'cessionário: endereço');
     if (e.tipo !== 'PF') { req(e, 'representante_nome', 'cessionário: representante'); req(e, 'representante_cpf', 'cessionário: CPF do representante'); }
     if (!e.pix && !e.banco) f.push('cessionário: conta para o hospital pagar');
